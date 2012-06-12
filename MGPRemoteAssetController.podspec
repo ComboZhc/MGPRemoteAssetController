@@ -58,7 +58,7 @@ Pod::Spec.new do |s|
   # over the selected files.
   # (See http://rake.rubyforge.org/classes/Rake/FileList.html.)
   #
-  s.source_files = 'Classes/**/{NSDate+Helpers, NSNotification+MGPAssetDownloader, NSString+MD5, MGPAssetCacheManager,MGPRemoteAssetDownloader,MGPRemoteAssetDownloadsController}.{h,m}'
+  s.source_files = 'Classes/{NSDate+Helpers,NSNotification+MGPAssetDownloader,NSString+MD5,MGPAssetCacheManager,MGPRemoteAssetDownloader,MGPRemoteAssetDownloadsController}.{h,m}'
 
   # A list of resources included with the Pod. These are copied into the
   # target bundle with a build phase script.
