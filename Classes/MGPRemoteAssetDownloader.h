@@ -55,6 +55,7 @@ typedef enum
 
 @property (nonatomic, readonly, retain) NSFileHandle *writeHandle;
 @property (nonatomic, readonly, copy) NSString *fileName;
+@property (nonatomic, copy) NSString *contentType;
 
 @property (nonatomic, assign, readonly) float downloadProgress;
 @property (nonatomic, assign, readonly) unsigned long long currentFileSize;

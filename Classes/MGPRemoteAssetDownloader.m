@@ -6,6 +6,10 @@
 //  Copyright 2011 Magical Panda Software LLC. All rights reserved.
 //
 
+
+#define DDLogInfo(...)      NSLog(__VA_ARGS__)
+#define DDLogVerbose(...)   NSLog(__VA_ARGS__)
+#define DDLogWarn(...)      NSLog(__VA_ARGS__)
 #import "MGPRemoteAssetDownloader.h"
 #import "NSString+MD5.h"
 
@@ -76,6 +80,7 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
 @synthesize downloadProgress = downloadProgress_;
 @synthesize expectedFileSize = expectedFileSize_;
 @synthesize currentFileSize = currentFileSize_;
+@synthesize contentType = contentType_;
 
 @synthesize request = request_;
 @synthesize requestTimeout = requestTimeout_;
@@ -105,8 +110,8 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat:@"<%@ [url: %@] [downloadPath: %@] [fileName: %@] [currentFileSize: %u] [cachedFileName: %@] [status: %d]>",
-            NSStringFromClass([self class]), self.URL, self.downloadPath, self.fileName, self.currentFileSize, self.fileCacheKey, self.status];
+    return [NSString stringWithFormat:@"<%@ [url: %@] [downloadPath: %@] [fileName: %@] [contentType: %@][currentFileSize: %u] [cachedFileName: %@] [status: %d]>",
+            NSStringFromClass([self class]), self.URL, self.downloadPath, self.fileName, self.contentType, self.currentFileSize, self.fileCacheKey, self.status];
 }
 
 - (void) performActionOnDelegate:(SEL)selector withObject:(id)parameter
@@ -198,7 +203,7 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
     else 
     {
         [self.cacheManager prepareCacheFileForURL:self.URL];
-
+        
         [self resume];
     }
 }
@@ -215,6 +220,7 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
     
     self.expectedFileSize = [httpResonse expectedContentLength];
     self.fileName = [httpResonse suggestedFilename];
+    self.contentType = [httpResonse MIMEType];
 
     self.serverAllowsResume = [[headers valueForKey:@"Accept-Ranges"] hasSuffix:@"bytes"];
     self.writeHandle = [NSFileHandle fileHandleForWritingAtPath:self.targetFile];
@@ -372,7 +378,7 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
         
 #ifndef __TESTING__
         self.connection = [[NSURLConnection alloc] initWithRequest:self.request delegate:self startImmediately:NO];
-        [self.connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        [self.connection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
 #endif
         [self.connection start];
         self.status = MGPRemoteAssetDownloaderStateRequestSent;

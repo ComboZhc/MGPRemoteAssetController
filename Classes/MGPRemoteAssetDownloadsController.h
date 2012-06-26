@@ -15,6 +15,7 @@ extern NSString * const kMGPRADownloadsControllerDownloadAddedNotification;
 extern NSString * const kMGPRADownloadsControlelrDownloadStartedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadRemovedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadPausedNotification;
+extern NSString * const kMGPRADownloadsControllerDownloadProgressedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadResumedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadFailedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadCompletedNotification;

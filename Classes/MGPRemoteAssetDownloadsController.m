@@ -6,7 +6,7 @@
 //  Copyright 2011 Magical Panda Software LLC. All rights reserved.
 //
 
-#import "NPReachability.h"
+#import "Reachability.h"
 #import "MGPRemoteAssetDownloadsController.h"
 #import "MGPRemoteAssetDownloader.h"
 #import "MGPAssetCacheManager.h"
@@ -17,6 +17,7 @@ NSString * const kMGPRADownloadsControllerDownloadAddedNotification = @"kMGPRADo
 NSString * const kMGPRADownloadsControlelrDownloadStartedNotification = @"kMGPRADownloadsControlelrDownloadStartedNotification";
 NSString * const kMGPRADownloadsControllerDownloadRemovedNotification = @"kMGPRADownloadsControllerDownloadRemovedNotification";
 NSString * const kMGPRADownloadsControllerDownloadPausedNotification = @"kMGPRADownloadsControllerDownloadPausedNotification";
+NSString * const kMGPRADownloadsControllerDownloadProgressedNotification = @"kMGPRADownloadsControllerDownloadProgressedNotification";
 NSString * const kMGPRADownloadsControllerDownloadResumedNotification = @"kMGPRADownloadsControllerDownloadResumedNotification";
 NSString * const kMGPRADownloadsControllerDownloadFailedNotification = @"kMGPRADownloadsControllerDownloadFailedNotification";
 NSString * const kMGPRADownloadsControllerDownloadCompletedNotification = @"kMGPRADownloadsControllerDownloadCompletedNotification";
@@ -44,17 +45,19 @@ NSString * const kMGPRADownloadsControllerAllDownloadsCompletedNotification = @"
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NPReachabilityChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kReachabilityChangedNotification object:nil];
 }
 
 - (void) initController
 {
     self.fileCache = [MGPAssetCacheManager defaultCache];
     self.downloads = [NSMutableArray array];
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged) 
-                                                 name:NPReachabilityChangedNotification 
+                                                 name:kReachabilityChangedNotification 
                                                object:nil];
+    [reachability startNotifier];
     [self reachabilityChanged];
 }
 
@@ -85,7 +88,7 @@ NSString * const kMGPRADownloadsControllerAllDownloadsCompletedNotification = @"
 
 - (void) reachabilityChanged
 {
-    self.networkIsReachable = [[NPReachability sharedInstance] isCurrentlyReachable];
+    self.networkIsReachable = [Reachability reachabilityForInternetConnection].isReachable;
 }
 
 - (NSArray *) allDownloads
@@ -175,7 +178,7 @@ NSString * const kMGPRADownloadsControllerAllDownloadsCompletedNotification = @"
 
 - (void) downloader:(MGPRemoteAssetDownloader *)downloader dataDidProgress:(NSDictionary *)currentProgress
 {
-    //    DDLogVerbose(@"Data progress: %@", currentProgress);
+    [self postNotificationName:kMGPRADownloadsControllerDownloadProgressedNotification withDownloader:downloader];
 }
 
 - (void) downloader:(MGPRemoteAssetDownloader *)downloader failedToDownloadURL:(NSURL *)url

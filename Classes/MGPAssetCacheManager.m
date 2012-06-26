@@ -6,6 +6,8 @@
 //  Copyright 2011 Magical Panda Software LLC. All rights reserved.
 //
 
+
+#define DDLogWarn(...) NSLog(__VA_ARGS__)
 #import <ImageIO/ImageIO.h>
 #import "MGPAssetCacheManager.h"
 #import "NSDate+Helpers.h"
