@@ -64,6 +64,8 @@ typedef enum
 @property (nonatomic, assign, readonly) unsigned long long bytesRemaining;
 @property (nonatomic, assign, readonly) NSTimeInterval timeRemaining;
 
+@property (nonatomic, retain) id userInfo;
+
 - (id) initWithURL:(NSURL *)url destinationPath:(NSString *)destinationPath;
 
 + (MGPRemoteAssetDownloader *) downloaderForAssetAtURL:(NSURL *)sourceURL;
@@ -74,6 +76,7 @@ typedef enum
 - (void) beginDownloadCompletion:(void(^)(BOOL successful))completion;
 - (void) beginDownload;
 - (void) pause;
+- (BOOL) shouldResumeDownloader;
 - (void) resume;
 - (void) cancel;
 

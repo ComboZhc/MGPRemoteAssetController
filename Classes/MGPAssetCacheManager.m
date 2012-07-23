@@ -75,7 +75,7 @@ CGSize sizeForImageAtURL(NSURL *imageFileURL)
 
 - (NSString *)cachePathForURL:(NSURL *)url
 {
-    NSString *fileName = [[url absoluteString] mgp_md5];
+    NSString *fileName = [[[url absoluteString] mgp_md5] stringByAppendingFormat:@".%@", [url pathExtension]];
     NSString *filePath = [[[self class] cachePath] stringByAppendingPathComponent:fileName];
     return filePath;
 }

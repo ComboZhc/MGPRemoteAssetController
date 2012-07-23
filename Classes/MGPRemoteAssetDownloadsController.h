@@ -12,7 +12,7 @@
 @class MGPAssetCacheManager;
 
 extern NSString * const kMGPRADownloadsControllerDownloadAddedNotification;
-extern NSString * const kMGPRADownloadsControlelrDownloadStartedNotification;
+extern NSString * const kMGPRADownloadsControllerDownloadStartedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadRemovedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadPausedNotification;
 extern NSString * const kMGPRADownloadsControllerDownloadProgressedNotification;
@@ -30,7 +30,7 @@ extern NSString * const kMGPRADownloadsControllerAllDownloadsCompletedNotificati
 
 - (MGPRemoteAssetDownloader *) downloaderForURL:(NSURL *)url;
 
-- (void) downloadAssetAtURL:(NSURL *)url progress:(void(^)(NSDictionary *))progressCallback completion:(void(^)(BOOL))completion;
+- (MGPRemoteAssetDownloader *) downloadAssetAtURL:(NSURL *)url progress:(void(^)(NSDictionary *))progressCallback completion:(void(^)(BOOL))completion;
 
 + (id) controller;
 + (id) sharedController;

@@ -14,7 +14,7 @@
 #import "MGPAssetCacheManager.h"
 
 NSString * const kMGPRADownloadsControllerDownloadAddedNotification = @"kMGPRADownloadsControllerAddedDownloadNotification";
-NSString * const kMGPRADownloadsControlelrDownloadStartedNotification = @"kMGPRADownloadsControlelrDownloadStartedNotification";
+NSString * const kMGPRADownloadsControllerDownloadStartedNotification = @"kMGPRADownloadsControlelrDownloadStartedNotification";
 NSString * const kMGPRADownloadsControllerDownloadRemovedNotification = @"kMGPRADownloadsControllerDownloadRemovedNotification";
 NSString * const kMGPRADownloadsControllerDownloadPausedNotification = @"kMGPRADownloadsControllerDownloadPausedNotification";
 NSString * const kMGPRADownloadsControllerDownloadProgressedNotification = @"kMGPRADownloadsControllerDownloadProgressedNotification";
@@ -162,7 +162,7 @@ NSString * const kMGPRADownloadsControllerAllDownloadsCompletedNotification = @"
 
 - (void) downloader:(MGPRemoteAssetDownloader *)downloader didBeginDownloadingURL:(NSURL *)url
 {
-    [self postNotificationName:kMGPRADownloadsControlelrDownloadStartedNotification withDownloader:downloader];
+    [self postNotificationName:kMGPRADownloadsControllerDownloadStartedNotification withDownloader:downloader];
 }
 
 - (void) downloader:(MGPRemoteAssetDownloader *)downloader didResumeDownloadingURL:(NSURL *)url
@@ -187,13 +187,14 @@ NSString * const kMGPRADownloadsControllerAllDownloadsCompletedNotification = @"
     [self postNotificationName:kMGPRADownloadsControllerDownloadFailedNotification withDownloader:downloader];
 }
 
-- (void) downloadAssetAtURL:(NSURL *)url progress:(void(^)(NSDictionary *))progressCallback completion:(void(^)(BOOL))completion;
+- (MGPRemoteAssetDownloader *) downloadAssetAtURL:(NSURL *)url progress:(void(^)(NSDictionary *))progressCallback completion:(void(^)(BOOL))completion;
 {
     MGPRemoteAssetDownloader *downloader = [self downloaderForURL:url];
     if (downloader.status != MGPRemoteAssetDownloaderStateDownloading) 
     {
         [downloader beginDownload:progressCallback completion:completion];
     }
+    return downloader;
 }
 
 - (MGPRemoteAssetDownloader *) createDownloaderWithURL:(NSURL *)url;
