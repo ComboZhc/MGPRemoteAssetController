@@ -10,9 +10,11 @@
 #define DDLogInfo(...)      NSLog(__VA_ARGS__)
 #define DDLogVerbose(...)   NSLog(__VA_ARGS__)
 #define DDLogWarn(...)      NSLog(__VA_ARGS__)
+#define HTTP_CODE_NOT_FOUND 404
+#define HTTP_CODE_INTERNAL_ERROR 500
+
 #import "MGPRemoteAssetDownloader.h"
 #import "NSString+MD5.h"
-
 NSString * const kMGPDownloaderKey =            @"kMGPDownloaderKey";
 NSString * const kMGPTimeRemainingKey =         @"kMGPTimeRemainingKey";
 NSString * const kMGPBytesRemainingKey =        @"kMGPBytesRemainingKey";
@@ -216,7 +218,15 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
     
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSDictionary *headers = [httpResponse allHeaderFields];
-    
+    if ([httpResponse statusCode] == HTTP_CODE_NOT_FOUND || [httpResponse statusCode] == HTTP_CODE_INTERNAL_ERROR) {
+        self.status = MGPRemoteAssetDownloaderStateFailed;
+        self.connection = nil;
+        if (self.completionHandler)
+        {
+            self.completionHandler(NO);
+        }
+        return;
+    }
     self.status = MGPRemoteAssetDownloaderStateDownloading;
     DDLogVerbose(@"Response Headers: %@", headers);
     
@@ -270,6 +280,8 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
 
 - (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
+    if (self.status == MGPRemoteAssetDownloaderStateFailed)
+        return;
     self.status = MGPRemoteAssetDownloaderStateDownloading;
     @try {
         [self.writeHandle writeData:data];
@@ -307,6 +319,10 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
 
 - (void) connectionDidFinishLoading:(NSURLConnection *)connection
 {
+    if (self.status == MGPRemoteAssetDownloaderStateFailed) {
+        self.connection = nil;
+        return;
+    }
     [self.writeHandle closeFile];
     [self downloadCompleted];
     self.connection = nil;
@@ -365,7 +381,7 @@ static const NSTimeInterval kMGPRemoteAssetDownloaderDefaultRequestTimeout = 30.
 
     if (![self shouldResumeDownloader]) return;
     
-    //if status != Canclled && != Completed && networkIsConnected
+    //if status != Cancelled && != Completed && networkIsConnected
     if ([self.delegate isURLReachable:self.URL])
     {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL 
